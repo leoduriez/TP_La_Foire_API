@@ -1,13 +1,15 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
-const cors = require('cors');
 const app = express();
 
 dotenv.config();
 
 // MIDDLEWARES
 app.use(express.json());
+
+// ROUTERS
+const userRouter = require('./router/user.router');
 
 // MONGO
 mongoose.connect(process.env.MONGO_URI, { dbName: process.env.DB_NAME })
@@ -16,6 +18,9 @@ mongoose.connect(process.env.MONGO_URI, { dbName: process.env.DB_NAME })
 
 // PORT
 const PORT = process.env.PORT || 8080;
+
+// PREFIX
+app.use('/api/user', userRouter);
 
 // LISTEN
 app.listen(PORT, () => {
