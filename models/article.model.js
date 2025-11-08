@@ -23,14 +23,22 @@ const articleSchema = mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User'
         },
-        // avis: [
-        //     {
-        //         type: mongoose.Schema.Types.ObjectId,
-        //         ref: 'Avis'
-        //     }
-        // ],
+        avis: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Avis'
+            }
+        ],
         picture: {
             type: String
+        },
+        img1: {
+            type: String,
+            required: true
+        },
+        img2: {
+            type: String,
+            required: true
         },
         status: {
             type: Boolean,
