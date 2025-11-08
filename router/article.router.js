@@ -6,7 +6,7 @@ const router = express.Router();
 
 // Importation des modèles
 const Article = require('../models/article.model');
-// const Avis = require('../models/avis.model');
+const Avis = require('../models/avis.model');
 
 // POST - Ajouter un article
 router.post('/add', async (req, res) => {
@@ -22,8 +22,8 @@ router.post('/add', async (req, res) => {
 router.get('/all', async (req, res) => {
     try {
         const articles = await Article.find()
-            .populate('user', 'prenom email');
-            // .populate('avis');
+            .populate('user', 'prenom email')
+            .populate('avis');
         res.status(200).json(articles);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -34,14 +34,14 @@ router.get('/all', async (req, res) => {
 router.get('/:id', async (req, res) => {
     try {
         const article = await Article.findById(req.params.id)
-            .populate('user', 'prenom email avatar');
-            // .populate({
-            //     path: 'avis',
-            //     populate: {
-            //         path: 'user',
-            //         select: 'prenom avatar'
-            //     }
-            // });
+            .populate('user', 'prenom email avatar')
+            .populate({
+                path: 'avis',
+                populate: {
+                    path: 'user',
+                    select: 'prenom avatar'
+                }
+            });
         
         if (!article) {
             return res.status(404).json({ message: 'Article non trouvé' });
@@ -84,7 +84,7 @@ router.delete('/delete/:id', async (req, res) => {
         }
 
         // Supprimer aussi tous les avis liés à cet article
-        // await Avis.deleteMany({ article: req.params.id });
+        await Avis.deleteMany({ article: req.params.id });
 
         await Article.findByIdAndDelete(req.params.id);
         
@@ -95,22 +95,22 @@ router.delete('/delete/:id', async (req, res) => {
 });
 
 // GET - Récupérer les avis d'un article
-// router.get('/:id/avis', async (req, res) => {
-//     try {
-//         const article = await Article.findById(req.params.id);
-//         
-//         if (!article) {
-//             return res.status(404).json({ message: 'Article non trouvé' });
-//         }
+router.get('/:id/avis', async (req, res) => {
+    try {
+        const article = await Article.findById(req.params.id);
+        
+        if (!article) {
+            return res.status(404).json({ message: 'Article non trouvé' });
+        }
 
-//         const avis = await Avis.find({ article: req.params.id })
-//             .populate('user', 'prenom avatar email');
-//         
-//         res.status(200).json(avis);
-//     } catch (error) {
-//         res.status(500).json({ message: error.message });
-//     }
-// });
+        const avis = await Avis.find({ article: req.params.id })
+            .populate('user', 'prenom avatar email');
+        
+        res.status(200).json(avis);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
 
 // GET - Trier les articles par prix (croissant par défaut)
 router.get('/sort/price', async (req, res) => {
