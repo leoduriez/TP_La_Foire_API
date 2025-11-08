@@ -10,6 +10,7 @@ app.use(express.json());
 
 // ROUTERS
 const userRouter = require('./router/user.router');
+const articleRouter = require('./router/article.router');
 
 // MONGO
 mongoose.connect(process.env.MONGO_URI, { dbName: process.env.DB_NAME })
@@ -21,6 +22,7 @@ const PORT = process.env.PORT || 8080;
 
 // PREFIX
 app.use('/api/user', userRouter);
+app.use('/api/article', articleRouter);
 
 // LISTEN
 app.listen(PORT, () => {
